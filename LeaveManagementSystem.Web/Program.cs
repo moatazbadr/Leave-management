@@ -8,6 +8,7 @@ namespace LeaveManagementSystem.Web
     {
         public static void Main(string[] args)
         {
+            //About this code :
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
