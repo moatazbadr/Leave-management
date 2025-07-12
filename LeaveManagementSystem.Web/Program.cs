@@ -1,4 +1,5 @@
 using LeaveManagementSystem.Web.Data;
+using LeaveManagementSystem.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,9 @@ namespace LeaveManagementSystem.Web
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            
+
+            builder.Services.AddScoped<ILeaveTypeService,LeaveTypeService>();
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
