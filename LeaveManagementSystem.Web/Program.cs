@@ -1,6 +1,8 @@
 using LeaveManagementSystem.Web.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace LeaveManagementSystem.Web
 {
@@ -16,9 +18,15 @@ namespace LeaveManagementSystem.Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+            builder.Services.AddAutoMapper(config =>
+            {
+                config.AddMaps(Assembly.GetExecutingAssembly());
+            });
+
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
