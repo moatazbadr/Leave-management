@@ -9,6 +9,7 @@ namespace LeaveManagementSystem.Web
 {
     public class Program
     {
+        
         public static void Main(string[] args)
         {
             //About this code :
@@ -25,7 +26,8 @@ namespace LeaveManagementSystem.Web
             });
 
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddScoped<ILeaveTypeService,LeaveTypeService>();
