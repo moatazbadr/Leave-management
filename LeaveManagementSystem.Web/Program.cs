@@ -25,6 +25,8 @@ namespace LeaveManagementSystem.Web
                 config.AddMaps(Assembly.GetExecutingAssembly());
             });
 
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()

@@ -50,6 +50,7 @@ namespace LeaveManagementSystem.Web.Data
                     Email = "admin@localhost.com",
                     NormalizedEmail = "ADMIN@LOCALHOST.COM",
                     UserName= "admin@localhost.com",
+                    NormalizedUserName= "admin@localhost.com".ToUpper(),
                     PasswordHash = hasherPassword.HashPassword(null, "Admin@123"),
                     EmailConfirmed = true,
                     FirstName = "Admin",
