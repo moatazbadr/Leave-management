@@ -1,7 +1,7 @@
 ﻿using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using System.Net.Mail;
 
-namespace LeaveManagementSystem.Web.Services
+namespace LeaveManagementSystem.Web.Services.EmailService
 {
     public class EmailSender :IEmailSender
     {

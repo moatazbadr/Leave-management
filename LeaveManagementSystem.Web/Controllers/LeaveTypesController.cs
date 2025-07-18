@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystem.Web.Data;
 using LeaveManagementSystem.Web.Models.LeaveTypes;
 using AutoMapper;
-using LeaveManagementSystem.Web.Services;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using LeaveManagementSystem.Web.Services.LeaveService;
 
 namespace LeaveManagementSystem.Web.Controllers
 {

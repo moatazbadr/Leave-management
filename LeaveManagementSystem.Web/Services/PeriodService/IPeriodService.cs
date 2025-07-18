@@ -1,6 +1,6 @@
 ﻿using LeaveManagementSystem.Web.Models.Period;
 
-namespace LeaveManagementSystem.Web.Services
+namespace LeaveManagementSystem.Web.Services.PeriodService
 {
     public interface IPeriodService
     {

@@ -2,7 +2,7 @@
 using LeaveManagementSystem.Web.Models.Period;
 using Microsoft.EntityFrameworkCore;
 
-namespace LeaveManagementSystem.Web.Services
+namespace LeaveManagementSystem.Web.Services.PeriodService
 {
     public class PeriodService : IPeriodService
     {

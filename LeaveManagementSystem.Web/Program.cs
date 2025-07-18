@@ -1,5 +1,7 @@
 using LeaveManagementSystem.Web.Data;
-using LeaveManagementSystem.Web.Services;
+using LeaveManagementSystem.Web.Services.EmailService;
+using LeaveManagementSystem.Web.Services.LeaveService;
+using LeaveManagementSystem.Web.Services.PeriodService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
