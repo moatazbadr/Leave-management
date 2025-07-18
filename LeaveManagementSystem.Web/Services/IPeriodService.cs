@@ -9,5 +9,7 @@ namespace LeaveManagementSystem.Web.Services
         Task<T> GetPeriodAysnc<T>(int id) where T : class;
         Task RemoveAsync(int id);
         Task updatePeriodAysnc(PeriodEditVM periodEdit);
+        bool PeriodExists(int id);
+        Task<bool> CheckPeriod(string name);
     }
 }

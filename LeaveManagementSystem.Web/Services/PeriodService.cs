@@ -89,11 +89,11 @@ namespace LeaveManagementSystem.Web.Services
         }
 
 
-        //public async Task<bool> CheckLeaveType(string name)
-        //{
-        //    name = name.ToLower().Trim();
-        //    return await _context.periods.AnyAsync(l => l.Name.ToLower().Trim() == name);
-        //}
+        public async Task<bool> CheckPeriod(string name)
+        {
+            name = name.ToLower().Trim();
+            return await _context.periods.AnyAsync(l => l.Name.ToLower().Trim() == name);
+        }
 
     }
 }

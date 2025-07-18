@@ -26,13 +26,14 @@ namespace LeaveManagementSystem.Web
             });
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.AddScoped<ILeaveTypeService,LeaveTypeService>();
+            builder.Services.AddScoped<IPeriodService, PeriodService>();           
 
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddScoped<ILeaveTypeService,LeaveTypeService>();
 
             builder.Services.AddControllersWithViews();
 
