@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LeaveManagementSystem.Web.Controllers
 {
-    public class LeaveAllocationController1 : Controller
+    [Authorize]
+    public class LeaveAllocationController : Controller
     {
         private readonly ILeaveAllocationService _leaveAllocationService;
 
-        public LeaveAllocationController1(ILeaveAllocationService leaveAllocationService)
+        public LeaveAllocationController(ILeaveAllocationService leaveAllocationService)
         {
             _leaveAllocationService = leaveAllocationService;
         }
-        public IActionResult Index()
+        public async Task <IActionResult> Index()
         {
+            var LeaveAllocations = _leaveAllocationService.GetAllocations();
+
             return View();
         }
     }
