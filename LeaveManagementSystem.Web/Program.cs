@@ -1,5 +1,6 @@
 using LeaveManagementSystem.Web.Data;
 using LeaveManagementSystem.Web.Services.EmailService;
+using LeaveManagementSystem.Web.Services.LeaveAllocationService;
 using LeaveManagementSystem.Web.Services.LeaveService;
 using LeaveManagementSystem.Web.Services.PeriodService;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,8 @@ namespace LeaveManagementSystem.Web
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddScoped<ILeaveTypeService,LeaveTypeService>();
-            builder.Services.AddScoped<IPeriodService, PeriodService>();           
+            builder.Services.AddScoped<IPeriodService, PeriodService>();    
+            builder.Services.AddScoped<ILeaveAllocationService, LeaveAllocationService>();
 
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)

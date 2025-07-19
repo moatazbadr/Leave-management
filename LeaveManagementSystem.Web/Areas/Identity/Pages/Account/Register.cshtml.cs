@@ -2,29 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
+using LeaveManagementSystem.Web.Services.LeaveAllocationService;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILeaveAllocationService _leaveAllocationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -34,6 +20,7 @@ namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
+           ILeaveAllocationService leaveAllocationService,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
@@ -41,6 +28,7 @@ namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             RoleManager<IdentityRole> roleManager)
         {
+            _leaveAllocationService = leaveAllocationService;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -119,11 +107,11 @@ namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
 
             [Required]
             [DataType(DataType.Date)]
-             [Display(Name = "Date Of Birth")]
+            [Display(Name = "Date Of Birth")]
             public DateOnly DateOfBirth { get; set; }
 
-            public string RoleName{ get; set; }
-            
+            public string RoleName { get; set; }
+
 
 
         }
@@ -161,7 +149,7 @@ namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
                     //await _userManager.AddToRoleAsync(user, Input.RoleName);
-                    if (Input.RoleName.Equals ("supervisor"))
+                    if (Input.RoleName.Equals("supervisor"))
                     {
                         await _userManager.AddToRolesAsync(user, ["employee", "supervisor"]);
                     }
@@ -170,7 +158,8 @@ namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
                         await _userManager.AddToRoleAsync(user, Input.RoleName);
                     }
 
-                        var userId = await _userManager.GetUserIdAsync(user);
+                    var userId = await _userManager.GetUserIdAsync(user);
+                     await  _leaveAllocationService.AllocateLeave(userId);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
@@ -179,8 +168,8 @@ namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -202,7 +191,7 @@ namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account
 
             var roles = await _roleManager.Roles.Select(q => q.Name)
                .Where(q => q != "administrator").ToArrayAsync();
-            
+
             Roles = roles;
             return Page();
         }

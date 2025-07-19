@@ -35,7 +35,7 @@ namespace LeaveManagementSystem.Web.Controllers
 
             if (data == null || !data.Any())
             {
-                return View("NoDataFound");
+                return View(data);
             }
             
             return View(data);

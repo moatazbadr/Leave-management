@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
+
 namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
 {
     public class LeaveAllocationService : ILeaveAllocationService
@@ -10,9 +12,35 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
             _context = context;
         }
 
-        public Task AllocationLeave(string EmployeeId)
+        public async Task AllocateLeave(string EmployeeId)
         {
-            throw new NotImplementedException();
+            var leavesTypes = await _context.leaveTypes.ToListAsync();
+            var currentDate = DateTime.Now;
+            var period = await _context.periods.SingleAsync(p => p.EndDate.Year == currentDate.Year);
+            var monthRemaining = period.EndDate.Month - currentDate.Month;
+
+            foreach (var leaveType in leavesTypes)
+            {
+                var Rate = decimal.Divide (leaveType.Days , 12);
+
+                var leaveAllocation = new LeaveAllocation()
+                {
+                    EmployeeId = EmployeeId,
+                    LeaveTypeId = leaveType.Id,
+                    PeriodId = period.Id,
+                    // يا غبي كام يوم غياب
+                    NumberOfDays = (int)Math.Ceiling(Rate * monthRemaining)
+                };
+                _context.Add(leaveAllocation);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
+        public async Task GetAllocations(string employeeId)
+        {
+
         }
     }
+    
 }
