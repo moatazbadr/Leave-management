@@ -47,15 +47,17 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
             }
         }
 
-        public async Task<List<LeaveAllocation>> GetAllocations()
+        public async Task<List<LeaveAllocation>> GetAllocations(string? UserId)
         {
-            var User = await _userManager.GetUserAsync(_httpContextAccessor?.HttpContext?.User);
+            
+
+                
             var currentDate = DateTime.Now;
             var period = await _context.periods.SingleAsync(p => p.EndDate.Year == currentDate.Year);
             var allocations = await _context.leaveAllocations
                 .Include(l => l.LeaveType)
                 .Include(l => l.Period)
-                .Where(l => l.EmployeeId == User.Id && l.PeriodId==period.Id)
+                .Where(l => l.EmployeeId == UserId && l.PeriodId==period.Id)
                 .ToListAsync();
             if (allocations == null || allocations.Count == 0)
                 return null;
@@ -63,11 +65,17 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
 
         }
 
-        public async Task<EmployeeLeaveAllocationVM> GetEmployeeLeaveAllocation()
+        public async Task<EmployeeLeaveAllocationVM> GetEmployeeLeaveAllocation(string? UserId)
         {
-            var allocations =await GetAllocations();
+            var User =string.IsNullOrEmpty(UserId) ?
+                await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User)
+                : await _userManager.FindByIdAsync(UserId);
+            var allocations =await GetAllocations(User.Id);
+
             var allocationVmList = _mapper.Map<List<LeaveAllocation>,List<LeaveAllocationVM>>(allocations);
-            var User = await _userManager.GetUserAsync(_httpContextAccessor?.HttpContext?.User);
+            
+
+
             var employeeVM = new EmployeeLeaveAllocationVM()
             {
                 Id = User.Id,
@@ -80,6 +88,16 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
             return employeeVM;
 
 
+        }
+
+        public async Task<List<EmployeeListVM>> GetEmployees()
+        {
+            var users = await _userManager.GetUsersInRoleAsync("employee");
+            if (users == null || users.Count == 0)
+                return null;
+            var employeeList = _mapper.Map<List<ApplicationUser>, List<EmployeeListVM>>(users.ToList());
+
+            return employeeList;
         }
 
     }

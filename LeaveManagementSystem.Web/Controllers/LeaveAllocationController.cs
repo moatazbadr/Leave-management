@@ -12,9 +12,16 @@ namespace LeaveManagementSystem.Web.Controllers
         {
             _leaveAllocationService = leaveAllocationService;
         }
-        public async Task <IActionResult> Details()
+        [Authorize(Roles = "administrator")]
+        public async Task<IActionResult> Index()
         {
-            var EmployeeVM = await _leaveAllocationService.GetEmployeeLeaveAllocation();
+            var Employees = await _leaveAllocationService.GetEmployees();
+
+            return View(Employees);
+        }
+        public async Task <IActionResult> Details(string? UserId)
+        {
+            var EmployeeVM = await _leaveAllocationService.GetEmployeeLeaveAllocation(UserId);
 
             return View(EmployeeVM);
         }
