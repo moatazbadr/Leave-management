@@ -12,11 +12,11 @@ namespace LeaveManagementSystem.Web.Controllers
         {
             _leaveAllocationService = leaveAllocationService;
         }
-        public async Task <IActionResult> Index()
+        public async Task <IActionResult> Details()
         {
-            var LeaveAllocations = _leaveAllocationService.GetAllocations();
+            var EmployeeVM = await _leaveAllocationService.GetEmployeeLeaveAllocation();
 
-            return View();
+            return View(EmployeeVM);
         }
     }
 }
