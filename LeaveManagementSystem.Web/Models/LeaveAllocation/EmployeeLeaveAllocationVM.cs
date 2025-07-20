@@ -8,9 +8,7 @@
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date)]
         public DateOnly DateOfBirth { get; set; }
-
-      
-
+        public bool isCompletedAllocation { get; set; } = false;
         public List<LeaveAllocationVM> LeaveAllocations { get; set; } = new List<LeaveAllocationVM>();
 
     }

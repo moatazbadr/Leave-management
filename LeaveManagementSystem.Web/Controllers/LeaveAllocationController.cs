@@ -12,12 +12,24 @@ namespace LeaveManagementSystem.Web.Controllers
         {
             _leaveAllocationService = leaveAllocationService;
         }
-        [Authorize(Roles = "administrator")]
+        [Authorize(Roles = UserRoles.administrator)]
         public async Task<IActionResult> Index()
         {
             var Employees = await _leaveAllocationService.GetEmployees();
 
             return View(Employees);
+        }
+
+
+        [Authorize(Roles = UserRoles.administrator)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        
+        public async Task<IActionResult> AllocateLeave(string? Id)
+        {
+            await _leaveAllocationService.AllocateLeave(Id);
+
+            return RedirectToAction(nameof(Details),new { UserId= Id }); //passed parameter 
         }
         public async Task <IActionResult> Details(string? UserId)
         {

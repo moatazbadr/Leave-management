@@ -1,9 +1,16 @@
 ﻿@model EmployeeLeaveAllocationVM
 @{
     ViewData["Title"] = "Leave Allocation Details";
+    var isAdmin = User.IsInRole(UserRoles.administrator) ;
+    var message = isAdmin ? "There is No allocations" : "You have no allocations contact the admin";
+    var missingMesssage = Model.isCompletedAllocation ? null : "User is missing Some leave allocations";
 }
 
 <h1>View allocation for @Model.FirstName @Model.LastName</h1>
+@if (isAdmin)
+{
+    <a asp-action="Index" class="btn btn-outline-primary">Back to List</a>
+}
 
 <div>
     <hr />
@@ -37,6 +44,18 @@
 
 </div>
 <hr />
+@if (isAdmin && !Model.isCompletedAllocation){
+    <div class="alert alert-warning" role="alert">
+        <h2>
+            @missingMesssage
+        </h2>
+    </div>
+    <form asp-action="AllocateLeave" class="mb-3">
+        <input type="hidden" asp-for="@Model.Id" />
+        <input type="submit" value="Allocate Missing Leaves" class="btn btn-outline-warning" />
+    </form>
+}
+
 @if (@Model.LeaveAllocations.Any())
 {
     <div class="card">
@@ -47,10 +66,10 @@
 
             <li class="list-group-item">
                 <div class="row">
-                    <div class="col">Leave Name</div>
-                    <div class="col">Original Allocation</div>
-                    <div class="col">Current Allocation</div>
-                    <div class="col">Action</div>
+                    <div class="col fw-bolder">Leave Name</div>
+                    <div class="col fw-bolder">Original Allocation</div>
+                    <div class="col fw-bolder">Current Allocation</div>
+                    <div class="col fw-bolder">Action</div>
 
                 </div>
 
@@ -85,7 +104,8 @@ else
 {
     <div class="alert alert-warning" role="alert">
         <h2>
-           You have no allocations contact the admin
+           @message
         </h2>
     </div>
 }
+
