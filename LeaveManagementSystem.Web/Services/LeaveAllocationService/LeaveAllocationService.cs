@@ -103,15 +103,37 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
             return employeeList;
         }
 
-        private async Task<bool> AllocateExists(string UserId,int periodId ,int leaveTypeId)
+        
+
+        public async Task<LeaveAllocationEditVM> GetAllocationForEmployee(int? Id)
         {
-            var Exists = await _context.leaveAllocations.AnyAsync( q=>
-                q.EmployeeId==UserId && q.LeaveTypeId==leaveTypeId
-                &&q.PeriodId==periodId);
-            return Exists;
+            var allocation = await _context.leaveAllocations
+                .Include(l => l.LeaveType)
+                .Include(l => l.Employee)
+                .FirstOrDefaultAsync(l => l.Id == Id);
+
+            var allocationVM = _mapper.Map<LeaveAllocationEditVM>(allocation);
+            return allocationVM;
 
         }
 
+        public async Task EditAllocation(LeaveAllocationEditVM leaveAllocationEdit)
+        {
+            await _context.leaveAllocations
+            .Where(q => q.Id == leaveAllocationEdit.Id)
+            .ExecuteUpdateAsync(s => s.SetProperty(e => e.NumberOfDays, leaveAllocationEdit.NumberOfDays));
+
+        }
+
+
+        private async Task<bool> AllocateExists(string UserId, int periodId, int leaveTypeId)
+        {
+            var Exists = await _context.leaveAllocations.AnyAsync(q =>
+                q.EmployeeId == UserId && q.LeaveTypeId == leaveTypeId
+                && q.PeriodId == periodId);
+            return Exists;
+
+        }
     }
     
 }

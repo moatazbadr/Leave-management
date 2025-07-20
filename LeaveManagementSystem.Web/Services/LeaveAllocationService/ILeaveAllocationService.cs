@@ -8,5 +8,7 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
         Task<List<LeaveAllocation>> GetAllocations(string? UserId);
         Task<EmployeeLeaveAllocationVM> GetEmployeeLeaveAllocation(string? UserId);
         Task<List<EmployeeListVM>> GetEmployees();
+        Task<LeaveAllocationEditVM> GetAllocationForEmployee(int? Id);
+        Task EditAllocation(LeaveAllocationEditVM leaveAllocationEdit);
     }
 }

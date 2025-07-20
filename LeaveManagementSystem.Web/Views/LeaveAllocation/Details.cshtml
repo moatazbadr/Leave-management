@@ -1,7 +1,7 @@
 ﻿@model EmployeeLeaveAllocationVM
 @{
     ViewData["Title"] = "Leave Allocation Details";
-    var isAdmin = User.IsInRole(UserRoles.administrator) ;
+    var isAdmin = User.IsInRole(UserRoles.administrator);
     var message = isAdmin ? "There is No allocations" : "You have no allocations contact the admin";
     var missingMesssage = Model.isCompletedAllocation ? null : "User is missing Some leave allocations";
 }
@@ -11,7 +11,6 @@
 {
     <a asp-action="Index" class="btn btn-outline-primary">Back to List</a>
 }
-
 <div>
     <hr />
     <dl class="row">
@@ -44,7 +43,8 @@
 
 </div>
 <hr />
-@if (isAdmin && !Model.isCompletedAllocation){
+@if (isAdmin && !Model.isCompletedAllocation)
+{
     <div class="alert alert-warning" role="alert">
         <h2>
             @missingMesssage
@@ -88,6 +88,13 @@
                         </div>
 
                         <div class="col">
+                            @if (isAdmin)
+                            {
+                                <a asp-action="EditAllocation" asp-controller="LeaveAllocation" asp-route-Id="@allocation.Id"
+                                   class="btn btn-outline-warning">
+                                    Edit
+                                </a>
+                            }
                             <a asp-controller="LeaveRequest" asp-action="Create" class="btn btn-outline-success">
                                 Request Leave
                             </a>
@@ -104,7 +111,7 @@ else
 {
     <div class="alert alert-warning" role="alert">
         <h2>
-           @message
+            @message
         </h2>
     </div>
 }
