@@ -69,8 +69,12 @@ namespace LeaveManagementSystem.Web.Data
 
         }
         public DbSet<LeaveType> leaveTypes { get; set; }
-    public DbSet<LeaveAllocation> leaveAllocations { get; set; }
+        public DbSet<LeaveAllocation> leaveAllocations { get; set; }
         public DbSet<Period> periods { get; set; }
+
+        public DbSet<LeaveRequestStatus> leaveRequestStatuses { get; set; }
+        public DbSet<LeaveRequest> leaveRequests { get; set; }
+
 
 
     }
