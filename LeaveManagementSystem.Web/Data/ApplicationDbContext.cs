@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using LeaveManagementSystem.Web.Data.Configurations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace LeaveManagementSystem.Web.Data
 {
@@ -20,45 +22,59 @@ namespace LeaveManagementSystem.Web.Data
 
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole
-                {
-                    Id = "54635f9d-508d-49c5-a6a2-e5d513b2b8a1",
-                    Name = "employee",
-                    NormalizedName = "EMPLOYEE".ToUpper(),
+            #region Refactored code [seeding data into identity Role]
+            //modelBuilder.Entity<IdentityRole>().HasData(
+            //       new IdentityRole
+            //       {
+            //           Id = "54635f9d-508d-49c5-a6a2-e5d513b2b8a1",
+            //           Name = "employee",
+            //           NormalizedName = "EMPLOYEE".ToUpper(),
 
-                },
-                new IdentityRole
-                {
-                    Id = "d852735f-e5bf-45d4-89ae-a1737e959552",
-                    Name= "supervisor",
-                    NormalizedName = "supervisor".ToUpper()
+            //       },
+            //       new IdentityRole
+            //       {
+            //           Id = "d852735f-e5bf-45d4-89ae-a1737e959552",
+            //           Name = "supervisor",
+            //           NormalizedName = "supervisor".ToUpper()
 
-                },
-                new IdentityRole
-                {
-                    Id = "a6932460-3d1d-4aa6-afb1-9d3c27b249c3",
-                    Name = "administrator",
-                    NormalizedName = "administrator".ToUpper()
-                }
-                );
-            var hasherPassword = new PasswordHasher<ApplicationUser>();
-            modelBuilder.Entity<ApplicationUser>().HasData(
-                new ApplicationUser 
-                { 
-                    Id = "1ce6b43c-3b0d-45b0-a069-6b4aa6b9a1e7",
-                    Email = "admin@localhost.com",
-                    NormalizedEmail = "ADMIN@LOCALHOST.COM",
-                    UserName= "admin@localhost.com",
-                    NormalizedUserName= "admin@localhost.com".ToUpper(),
-                    PasswordHash = hasherPassword.HashPassword(null, "Admin@123"),
-                    EmailConfirmed = true,
-                    FirstName = "Admin",
-                    LastName = "User",
-                    DateOfBirth = new DateOnly(2001, 11, 20)
-                }
-                
-                );
+            //       },
+            //       new IdentityRole
+            //       {
+            //           Id = "a6932460-3d1d-4aa6-afb1-9d3c27b249c3",
+            //           Name = "administrator",
+            //           NormalizedName = "administrator".ToUpper()
+            //       }
+            //       ); 
+            #endregion
+            #region Refactored Code [seeding data into application user table]
+            //var hasherPassword = new PasswordHasher<ApplicationUser>();
+            //modelBuilder.Entity<ApplicationUser>().HasData(
+            //    new ApplicationUser
+            //    {
+            //        Id = "1ce6b43c-3b0d-45b0-a069-6b4aa6b9a1e7",
+            //        Email = "admin@localhost.com",
+            //        NormalizedEmail = "ADMIN@LOCALHOST.COM",
+            //        UserName = "admin@localhost.com",
+            //        NormalizedUserName = "admin@localhost.com".ToUpper(),
+            //        PasswordHash = hasherPassword.HashPassword(null, "Admin@123"),
+            //        EmailConfirmed = true,
+            //        FirstName = "Admin",
+            //        LastName = "User",
+            //        DateOfBirth = new DateOnly(2001, 11, 20)
+            //    }
+
+            //    ); 
+            #endregion
+            ////seeding Roles using Configuration classes
+            //modelBuilder.ApplyConfiguration(new IdentityRoleConfiguration());
+            ////seeding LeaveTypesRequestSatuses using the same configuration classes
+            //modelBuilder.ApplyConfiguration(new LeaveRequestStatusConfiguration());
+            ////seeding ApplicationUser using the same configuration classes
+            //modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
+          
+            
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string>
                 {
@@ -66,6 +82,7 @@ namespace LeaveManagementSystem.Web.Data
                     RoleId = "a6932460-3d1d-4aa6-afb1-9d3c27b249c3"
                 }
                 );
+
 
         }
         public DbSet<LeaveType> leaveTypes { get; set; }
