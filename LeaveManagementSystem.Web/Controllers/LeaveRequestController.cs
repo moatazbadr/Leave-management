@@ -1,5 +1,6 @@
 ﻿using LeaveManagementSystem.Web.Models.LeaveRequestModels;
 using LeaveManagementSystem.Web.Services.LeaveAllocationService;
+using LeaveManagementSystem.Web.Services.LeaveRequests;
 using LeaveManagementSystem.Web.Services.LeaveService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,11 +8,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace LeaveManagementSystem.Web.Controllers;
 
 [Authorize]
-public class LeaveRequestController(ILeaveTypeService _leaveTypeService) : Controller
+public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveRequestService _leaveRequestService) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        return View();
+        var model = await _leaveRequestService.GetEmployeeLeaveRequests();
+
+        return View(model);
     }
     public async Task<IActionResult> Create()
     {
@@ -30,14 +33,32 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService) : Contr
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(LeaveRequestCreateVM model)
     {
-        return View();
+        if (await _leaveRequestService.RequestDatesExceedAllocation(model))
+        {
+            ModelState.AddModelError(string.Empty, "You have exceeded your Allocation");
+            ModelState.AddModelError(nameof(model.EndDate), "the number of days requested is invalid");
+
+        }
+
+        if (ModelState.IsValid)
+        {
+            await _leaveRequestService.CreateLeaveRequest(model);
+            return RedirectToAction(nameof(Index));
+        }
+
+        var LeaveTypes = await _leaveTypeService.GetAllLeaveTypesAsync();
+        var LeaveTypesList = new SelectList(LeaveTypes, "Id", "Name");
+        model.LeaveTypes = LeaveTypesList;
+        return View(model);
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
 
-    public async Task<IActionResult> Cancel(int LeaveRequestId)
+    public async Task<IActionResult> Cancel(int Id)
     {
-        return View();
+       
+         await _leaveRequestService.CancelLeaveRequest(Id);
+        return RedirectToAction(nameof(Index));
     }
     public async Task<IActionResult> ListRequests()
     {

@@ -11,5 +11,6 @@ global using System.Text;
 global using System.Text.Encodings.Web;
 global using LeaveManagementSystem.Web.Models.Period;
 global using LeaveManagementSystem.Web.Models.LeaveAllocation;
-global using LeaveManagementSystem.Web;
+global using LeaveManagementSystem.Web.Data;
+
 global using LeaveManagementSystem.Web.Models.LeaveRequestModels;

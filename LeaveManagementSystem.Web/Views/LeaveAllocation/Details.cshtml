@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Leave Allocation Details";
     var isAdmin = User.IsInRole(UserRoles.administrator);
+    var isEmployee = User.IsInRole(UserRoles.employee);
     var message = isAdmin ? "There is No allocations" : "You have no allocations contact the admin";
     var missingMesssage = Model.isCompletedAllocation ? null : "User is missing Some leave allocations";
 }
@@ -10,6 +11,11 @@
 @if (isAdmin)
 {
     <a asp-action="Index" class="btn btn-outline-primary">Back to List</a>
+}
+
+@if (isEmployee)
+{
+    <a asp-controller="LeaveRequest" asp-action="Index" class="btn btn-outline-primary">View Requests</a>
 }
 <div>
     <hr />
