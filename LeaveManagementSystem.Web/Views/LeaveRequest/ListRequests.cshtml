@@ -1,0 +1,137 @@
+﻿@using LeaveManagementSystem.Web.Services.LeaveRequests
+@model EmployeeLeaveRequestLisVM;
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "view Leave Requests";
+}
+<h1>Admin Leave Requests View</h1>
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="card-title text-primary">@Model.TotalRequests</h1>
+                <h5 class="card-text">@Html.DisplayNameFor(model => model.TotalRequests)</h5>
+            </div>
+        </div>
+    </div> <div class="col">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="card-title text-success">@Model.ApprovedRequests</h1>
+                <h5 class="card-text">@Html.DisplayNameFor(model => model.ApprovedRequests)</h5>
+            </div>
+        </div>
+    </div> <div class="col">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="card-title text-warning">@Model.PendingRequests</h1>
+                <h5 class="card-text">@Html.DisplayNameFor(model => model.PendingRequests)</h5>
+            </div>
+        </div>
+    </div> <div class="col">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="card-title text-danger">@Model.RejectedRequests</h1>
+                <h5 class="card-text">@Html.DisplayNameFor(model => model.RejectedRequests)</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+<h2>Leave Requests</h2>
+<hr />
+
+@if (Model.LeaveRequests.Count == 0)
+{
+    <div class="alert alert-info">
+        <h3>There are no leave requests</h3>
+    </div>
+}
+else {
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.LeaveRequests[0].LeaveTypeName)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.LeaveRequests[0].StartDate)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.LeaveRequests[0].EndDate)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.LeaveRequests[0].NumberOfDays)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.LeaveRequests[0].Status)
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.LeaveRequests)
+        {
+            var className = string.Empty;
+            if (item.Status == LeaveRequestStatusEnum.Pending)
+            {
+                className = "warning";
+            }
+            else if (item.Status == LeaveRequestStatusEnum.Approved)
+            {
+                className = "success";
+            }
+            else if (item.Status == LeaveRequestStatusEnum.Declined)
+            {
+                className = "danger";
+            }
+            else if (item.Status == LeaveRequestStatusEnum.Cancelled)
+            {
+                className = "dark";
+            }
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LeaveTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfDays)
+                </td>
+                <td>
+                    <span class="badge rounded-pill bg-@className">@item.Status.ToString()</span>
+                </td>
+                <td>
+                    @if (item.Status == LeaveRequestStatusEnum.Pending)
+                    {
+                        @*  <a asp-action="Cancel" asp-route-id="@item.Id" class="btn btn-outline-danger">cancel</a> *@
+                        <a asp-action="Review" class="btn btn-outline-primary"> Review</a>
+                    }
+                    else
+                    {
+                        <p>No action allowed</p>
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+
+
+
+

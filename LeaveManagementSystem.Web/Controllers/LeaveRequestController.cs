@@ -62,12 +62,14 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveR
     }
     public async Task<IActionResult> ListRequests()
     {
-        return View();
+        var model = await _leaveRequestService.AdminGetAllLeaveRequests();
+
+        return View(model);
     }
 
     public async Task<IActionResult> Review(int leaveRequestId)
     {
-
+        _leaveRequestService.GetLeaveRequestForReview(leaveRequestId);
         return View();
     }
 

@@ -41,9 +41,29 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
 
     }
 
-    public Task<EmployeeLeaveRequestLisVM> AdminGetAllLeaveRequests()
+    public async Task<EmployeeLeaveRequestLisVM> AdminGetAllLeaveRequests()
     {
-        throw new NotImplementedException();
+        var leaveRequests = await _context.leaveRequests.Include(l=>l.leaveType)
+                                                  .ToListAsync();
+        var model = new EmployeeLeaveRequestLisVM()
+        {
+            ApprovedRequests = leaveRequests.Count(x => x.LeaveRequestStatusId == (int)LeaveRequestStatusEnum.Approved),
+            PendingRequests = leaveRequests.Count(x => x.LeaveRequestStatusId == (int)LeaveRequestStatusEnum.Pending),
+            RejectedRequests = leaveRequests.Count(x => x.LeaveRequestStatusId == (int)LeaveRequestStatusEnum.Declined),
+            TotalRequests = leaveRequests.Count,
+            LeaveRequests = leaveRequests.Select(x => new LeaveRequestListVM
+            {
+                EndDate = x.EndDate,
+                StartDate = x.StartDate,
+                LeaveTypeName = x.leaveType?.Name,
+                NumberOfDays = x.EndDate.DayNumber - x.StartDate.DayNumber,
+                Status = (LeaveRequestStatusEnum)x.LeaveRequestStatusId,
+                Id = x.Id
+            }).ToList()
+
+        };
+        return model;
+
     }
 
     public async Task<List<LeaveRequestListVM>> GetEmployeeLeaveRequests()
@@ -82,6 +102,36 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
             return allocation.NumberOfDays < numberOfDays;
 
         return true;
+    }
+
+    public async Task <ReviewLeaveRequestVM> GetLeaveRequestForReview(int leaveRequestId)
+    {
+        var leaveRequest = await _context.leaveRequests
+            .Include(x => x.leaveType)
+            .FirstOrDefaultAsync(x => x.Id == leaveRequestId);
+        
+            var User = await _userManager.FindByIdAsync(leaveRequest.EmployeeId);
+
+        var model = new ReviewLeaveRequestVM
+        {
+            StartDate = leaveRequest.StartDate,
+            EndDate = leaveRequest.EndDate,
+            Id = leaveRequest.Id,
+            LeaveTypeName = leaveRequest.leaveType.Name,
+            NumberOfDays = leaveRequest.EndDate.DayNumber - leaveRequest.StartDate.DayNumber,
+            Status = (LeaveRequestStatusEnum)leaveRequest.LeaveRequestStatusId,
+            EmployeeListVM = new EmployeeListVM
+            {
+                Id = User.Id,
+                FirstName = User.FirstName,
+                LastName = User.LastName,
+                Email = User.Email
+
+            }
+
+        };
+
+        return model;
     }
     #region Improved Version
     //public async Task<bool> RequestDatesExceedAllocation(int leaveTypeId, DateOnly startDate, DateOnly endDate)
