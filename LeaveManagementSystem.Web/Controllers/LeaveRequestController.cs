@@ -69,17 +69,19 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveR
 
     public async Task<IActionResult> Review(int leaveRequestId)
     {
-        _leaveRequestService.GetLeaveRequestForReview(leaveRequestId);
-        return View();
+      var model= await  _leaveRequestService.GetLeaveRequestForReview(leaveRequestId);
+        return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
 
-    public async Task<IActionResult> Review(/*Use view model*/)
+    public async Task<IActionResult> Review(int id, bool approved)
     {
+       await _leaveRequestService.ReviewLeaveRequest(id,approved);
 
-        return View();
+
+        return RedirectToAction(nameof(ListRequests));
 
     }
 }

@@ -51,8 +51,10 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
             PendingRequests = leaveRequests.Count(x => x.LeaveRequestStatusId == (int)LeaveRequestStatusEnum.Pending),
             RejectedRequests = leaveRequests.Count(x => x.LeaveRequestStatusId == (int)LeaveRequestStatusEnum.Declined),
             TotalRequests = leaveRequests.Count,
+
             LeaveRequests = leaveRequests.Select(x => new LeaveRequestListVM
             {
+                
                 EndDate = x.EndDate,
                 StartDate = x.StartDate,
                 LeaveTypeName = x.leaveType?.Name,
@@ -87,9 +89,24 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
     }
 
 
-    public Task ReviewLeaveRequest(ReviewLeaveRequestVM model)
+    public async Task ReviewLeaveRequest(int leaveRequestId, bool approved)
     {
-        throw new NotImplementedException();
+        var User = _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var leaveRequest = await _context.leaveRequests.FindAsync(leaveRequestId);
+        leaveRequest.LeaveRequestStatusId = approved
+            ? (int)LeaveRequestStatusEnum.Approved
+            : (int)LeaveRequestStatusEnum.Declined;
+        leaveRequest.ReviewerId = (await User)?.Id;
+
+        if (!approved)
+        {
+            var allocation = await _context.leaveAllocations
+                .FirstOrDefaultAsync(x => x.EmployeeId == leaveRequest.EmployeeId && x.LeaveTypeId == leaveRequest.leaveTypeId);
+            var numberOfDays = leaveRequest.EndDate.DayNumber - leaveRequest.StartDate.DayNumber;
+            allocation.NumberOfDays += numberOfDays;
+        }
+            await _context.SaveChangesAsync();
+
     }
     public async Task<bool> RequestDatesExceedAllocation(LeaveRequestCreateVM model)
     {
@@ -119,6 +136,7 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
             Id = leaveRequest.Id,
             LeaveTypeName = leaveRequest.leaveType.Name,
             NumberOfDays = leaveRequest.EndDate.DayNumber - leaveRequest.StartDate.DayNumber,
+            RequestComment = leaveRequest.RequestComments,
             Status = (LeaveRequestStatusEnum)leaveRequest.LeaveRequestStatusId,
             EmployeeListVM = new EmployeeListVM
             {
