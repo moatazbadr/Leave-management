@@ -117,7 +117,7 @@ else {
                     @if (item.Status == LeaveRequestStatusEnum.Pending)
                     {
                         @*  <a asp-action="Cancel" asp-route-id="@item.Id" class="btn btn-outline-danger">cancel</a> *@
-                        <a asp-action="Review" class="btn btn-outline-primary"> Review</a>
+                            <a asp-action="Review" asp-route-leaveRequestId="@item.Id" class="btn btn-outline-primary"> Review</a>
                     }
                     else
                     {
