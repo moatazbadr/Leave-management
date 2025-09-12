@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using LeaveManagementSystem.Web.Services.LeaveAllocationService;
 using Microsoft.EntityFrameworkCore;
 namespace LeaveManagementSystem.Web.Services.LeaveRequests;
 
 public partial class LeaveRequestService(IMapper _mapper, UserManager<ApplicationUser> _userManager
-    , IHttpContextAccessor _httpContextAccessor, ApplicationDbContext _context) : ILeaveRequestService
+    , IHttpContextAccessor _httpContextAccessor, ApplicationDbContext _context ,ILeaveAllocationService _leaveAllocationService) : ILeaveRequestService
 {
     public async Task CancelLeaveRequest(int leaveRequestId)
     {
@@ -163,6 +164,23 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
 
         return model;
     }
+
+
+    private int  calculateDays(DateOnly start, DateOnly end)
+    {
+        return (end.DayNumber - start.DayNumber); // Inclusive of start day
+    }
+    private async Task updateAllocationDays (LeaveRequest leaveRequest ,bool deductDays)
+    {
+        var allocation = await _leaveAllocationService.GetCurrentAllocation(leaveRequest.leaveTypeId, leaveRequest.EmployeeId);
+        var numberOfDays = calculateDays(leaveRequest.StartDate, leaveRequest.EndDate);
+        if (deductDays)
+            allocation.NumberOfDays -= numberOfDays;
+        else
+            allocation.NumberOfDays += numberOfDays;
+        _context.Entry(allocation).State = EntityState.Modified;
+    }
+
     #region Improved Version
     //public async Task<bool> RequestDatesExceedAllocation(int leaveTypeId, DateOnly startDate, DateOnly endDate)
     //{

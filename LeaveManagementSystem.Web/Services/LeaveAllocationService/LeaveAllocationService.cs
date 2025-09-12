@@ -133,12 +133,16 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
         }
 
 
-        private async Task<bool> AllocateExists(string UserId, int periodId, int leaveTypeId)
+
+        public async Task<LeaveAllocation> GetCurrentAllocation(int LeaveTypeId, string EmployeeId)
         {
-            var Exists = await _context.leaveAllocations.AnyAsync(q =>
-                q.EmployeeId == UserId && q.LeaveTypeId == leaveTypeId
-                && q.PeriodId == periodId);
-            return Exists;
+            var period = await _periodService.GetCurrentPeriod();
+            var allocation = await _context.leaveAllocations
+                .FirstOrDefaultAsync(l => l.EmployeeId == EmployeeId
+                && l.LeaveTypeId == LeaveTypeId
+                && l.PeriodId == period.Id);
+
+            return allocation;
 
         }
     }
