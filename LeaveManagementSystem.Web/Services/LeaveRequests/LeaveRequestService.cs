@@ -11,15 +11,16 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
         var leaveRequest = await _context.leaveRequests.FindAsync(leaveRequestId);
         leaveRequest.LeaveRequestStatusId = (int)LeaveRequestStatusEnum.Cancelled;
 
-        var numberOfDays = leaveRequest.EndDate.DayNumber - leaveRequest.StartDate.DayNumber;
-        var currentDate = DateTime.Now;
-        var period = await _context.periods.SingleAsync(p => p.EndDate.Year == currentDate.Year);
-        var AllocationToAdd = await _context.leaveAllocations
-            .FirstOrDefaultAsync(x => x.EmployeeId == leaveRequest.EmployeeId && x.LeaveTypeId == leaveRequest.leaveTypeId
-        &&    x.PeriodId == period.Id
-            );
-        AllocationToAdd.NumberOfDays += numberOfDays;
+        //var numberOfDays = leaveRequest.EndDate.DayNumber - leaveRequest.StartDate.DayNumber;
+        //var currentDate = DateTime.Now;
+        //var period = await _context.periods.SingleAsync(p => p.EndDate.Year == currentDate.Year);
+        //var AllocationToAdd = await _context.leaveAllocations
+        //    .FirstOrDefaultAsync(x => x.EmployeeId == leaveRequest.EmployeeId && x.LeaveTypeId == leaveRequest.leaveTypeId
+        //&&    x.PeriodId == period.Id
+        //    );
 
+        //AllocationToAdd.NumberOfDays += numberOfDays;
+        await updateAllocationDays(leaveRequest, false);
         await _context.SaveChangesAsync();
     }
 
@@ -33,19 +34,8 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
         }
         leaveRequest.LeaveRequestStatusId = (int)LeaveRequestStatusEnum.Pending;
         await _context.leaveRequests.AddAsync(leaveRequest);
-        var currentDate = DateTime.Now;
-        var period = await _context.periods.SingleAsync(p => p.EndDate.Year == currentDate.Year);
-
-        var numberOfDays = model.StartDate.DayNumber - model.EndDate.DayNumber;
-        var AllocationToDeduct = await _context.leaveAllocations
-            .FirstOrDefaultAsync(x => x.EmployeeId == user.Id && x.LeaveTypeId == model.leaveTypeId
-            && x.PeriodId == period.Id
-            );
-        if (AllocationToDeduct != null)
-        {
-            AllocationToDeduct.NumberOfDays -= numberOfDays;
-            _context.leaveAllocations.Update(AllocationToDeduct);
-        }
+       
+        await updateAllocationDays(leaveRequest, true);
         await _context.SaveChangesAsync();
 
     }
@@ -111,10 +101,8 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
 
         if (!approved)
         {
-            var allocation = await _context.leaveAllocations
-                .FirstOrDefaultAsync(x => x.EmployeeId == leaveRequest.EmployeeId && x.LeaveTypeId == leaveRequest.leaveTypeId && x.PeriodId == period.Id);
-            var numberOfDays = leaveRequest.EndDate.DayNumber - leaveRequest.StartDate.DayNumber;
-            allocation.NumberOfDays += numberOfDays;
+           await updateAllocationDays(leaveRequest, false);
+            
         }
             await _context.SaveChangesAsync();
 
