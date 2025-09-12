@@ -95,5 +95,11 @@ namespace LeaveManagementSystem.Web.Services.PeriodService
             return await _context.periods.AnyAsync(l => l.Name.ToLower().Trim() == name);
         }
 
+        public async Task<Period> GetCurrentPeriod()
+        {
+            var currentDate = DateTime.Now;
+            var period = await _context.periods.SingleAsync(q => q.EndDate.Year == currentDate.Year);
+            return period;
+        }
     }
 }

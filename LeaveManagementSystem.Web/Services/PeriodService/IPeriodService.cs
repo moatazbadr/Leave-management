@@ -11,5 +11,6 @@ namespace LeaveManagementSystem.Web.Services.PeriodService
         Task updatePeriodAysnc(PeriodEditVM periodEdit);
         bool PeriodExists(int id);
         Task<bool> CheckPeriod(string name);
+        Task<Period> GetCurrentPeriod();
     }
 }
