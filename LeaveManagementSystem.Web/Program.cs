@@ -32,6 +32,7 @@ public class Program
         builder.Services.AddScoped<ILeaveTypeService, LeaveTypeService>();
         builder.Services.AddScoped<IPeriodService, PeriodService>();
         builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
+        
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
