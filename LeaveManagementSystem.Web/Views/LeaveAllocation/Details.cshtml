@@ -101,7 +101,7 @@
                                     Edit
                                 </a>
                             }
-                            <a asp-controller="LeaveRequest" asp-action="Create" class="btn btn-outline-success">
+                            <a asp-controller="LeaveRequest" asp-route-leaveTypeId="@allocation.leaveType.Id" asp-action="Create" class="btn btn-outline-success">
                                 Request a Leave
                             </a>
                         </div>

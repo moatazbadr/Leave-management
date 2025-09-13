@@ -16,11 +16,13 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveR
 
         return View(model);
     }
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(int ? leaveTypeId)
     {
+        
         var LeaveTypes= await _leaveTypeService.GetAllLeaveTypesAsync();
-        var LeaveTypesList= new SelectList(LeaveTypes, "Id", "Name");
-        var model = new LeaveRequestCreateVM
+        var LeaveTypesList= new SelectList(LeaveTypes, "Id", "Name",leaveTypeId);
+                                                       //id , name , selected value
+        var model = new LeaveRequestCreateVM    
         {
             StartDate = DateOnly.FromDateTime(DateTime.Now),
             EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
