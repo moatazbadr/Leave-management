@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using LeaveManagementSystem.Web.Services.LeaveAllocationService;
+using LeaveManagementSystem.Web.Services.Users;
 using Microsoft.EntityFrameworkCore;
 namespace LeaveManagementSystem.Web.Services.LeaveRequests;
 
-public partial class LeaveRequestService(IMapper _mapper, UserManager<ApplicationUser> _userManager
-    , IHttpContextAccessor _httpContextAccessor, ApplicationDbContext _context ,ILeaveAllocationService _leaveAllocationService) : ILeaveRequestService
+public partial class LeaveRequestService(IMapper _mapper,IUserService _userService, ApplicationDbContext _context ,ILeaveAllocationService _leaveAllocationService) : ILeaveRequestService
 {
     public async Task CancelLeaveRequest(int leaveRequestId)
     {
@@ -27,7 +27,7 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
     public async Task CreateLeaveRequest(LeaveRequestCreateVM model)
     {
         var leaveRequest = _mapper.Map<LeaveRequest>(model);
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var user = await _userService.GetLoggedUser();
         if (user != null)
         {
             leaveRequest.EmployeeId = user.Id;
@@ -69,7 +69,7 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
 
     public async Task<List<LeaveRequestListVM>> GetEmployeeLeaveRequests()
     {
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var user = await _userService.GetLoggedUser();
         var leaveRequests = await _context.leaveRequests
                                  .Include(x => x.leaveType)
                                  .Where(x => x.EmployeeId == user.Id).ToListAsync();
@@ -90,12 +90,12 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
 
     public async Task ReviewLeaveRequest(int leaveRequestId, bool approved)
     {
-        var User = _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var User = await _userService.GetLoggedUser() ;
         var leaveRequest = await _context.leaveRequests.FindAsync(leaveRequestId);
         leaveRequest.LeaveRequestStatusId = approved
             ? (int)LeaveRequestStatusEnum.Approved
             : (int)LeaveRequestStatusEnum.Declined;
-        leaveRequest.ReviewerId = (await User)?.Id;
+        leaveRequest.ReviewerId = ( User)?.Id;
         var currentDate = DateTime.Now;
         var period = await _context.periods.SingleAsync(p => p.EndDate.Year == currentDate.Year );
 
@@ -109,7 +109,7 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
     }
     public async Task<bool> RequestDatesExceedAllocation(LeaveRequestCreateVM model)
     {
-        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var user = await _userService.GetLoggedUser();
         var currentDate = DateTime.Now;
         var period = await _context.periods.SingleAsync(p => p.EndDate.Year == currentDate.Year);
 
@@ -128,7 +128,7 @@ public partial class LeaveRequestService(IMapper _mapper, UserManager<Applicatio
             .Include(x => x.leaveType)
             .FirstOrDefaultAsync(x => x.Id == leaveRequestId);
         
-            var User = await _userManager.FindByIdAsync(leaveRequest.EmployeeId);
+            var User = await _userService.GetUserById(leaveRequest.EmployeeId);
 
         var model = new ReviewLeaveRequestVM
         {

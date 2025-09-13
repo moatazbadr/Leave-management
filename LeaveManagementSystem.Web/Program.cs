@@ -3,6 +3,7 @@ using LeaveManagementSystem.Web.Services.LeaveAllocationService;
 using LeaveManagementSystem.Web.Services.LeaveRequests;
 using LeaveManagementSystem.Web.Services.LeaveService;
 using LeaveManagementSystem.Web.Services.PeriodService;
+using LeaveManagementSystem.Web.Services.Users;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -32,7 +33,7 @@ public class Program
         builder.Services.AddScoped<ILeaveTypeService, LeaveTypeService>();
         builder.Services.AddScoped<IPeriodService, PeriodService>();
         builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
-        
+        builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)

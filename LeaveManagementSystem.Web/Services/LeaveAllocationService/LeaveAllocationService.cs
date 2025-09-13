@@ -2,6 +2,7 @@
 using AutoMapper;
 using LeaveManagementSystem.Web.Models.LeaveAllocation;
 using LeaveManagementSystem.Web.Services.PeriodService;
+using LeaveManagementSystem.Web.Services.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
@@ -9,8 +10,7 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
     public class LeaveAllocationService : ILeaveAllocationService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _UserService;
         private readonly IMapper _mapper;
         private readonly IPeriodService _periodService;
         public LeaveAllocationService(
@@ -18,13 +18,12 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
             IMapper mapper,
             IHttpContextAccessor httpContext,
             UserManager<ApplicationUser> userManager,
-            IPeriodService periodService
-
+            IPeriodService periodService,
+            IUserService userService
             )
         {
-            _httpContextAccessor = httpContext;
             _context = context;
-            _userManager = userManager;
+            _UserService = userService;
             _mapper = mapper;
             _periodService = periodService;
         }
@@ -76,8 +75,8 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
         public async Task<EmployeeLeaveAllocationVM> GetEmployeeLeaveAllocation(string? UserId)
         {
             var User = string.IsNullOrEmpty(UserId) ?
-                await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User)
-                : await _userManager.FindByIdAsync(UserId);
+                await _UserService.GetLoggedUser() 
+                : await _UserService.GetUserById(UserId);
             var allocations = await GetAllocations(User.Id);
 
             var allocationVmList = _mapper.Map<List<LeaveAllocation>, List<LeaveAllocationVM>>(allocations);
@@ -102,7 +101,7 @@ namespace LeaveManagementSystem.Web.Services.LeaveAllocationService
 
         public async Task<List<EmployeeListVM>> GetEmployees()
         {
-            var users = await _userManager.GetUsersInRoleAsync("employee");
+            var users = await _UserService.GetEmployees();
             if (users == null || users.Count == 0)
                 return null;
             var employeeList = _mapper.Map<List<ApplicationUser>, List<EmployeeListVM>>(users.ToList());
