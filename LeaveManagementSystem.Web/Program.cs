@@ -22,10 +22,11 @@ public class Program
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+        #region Services Manager
         builder.Services.AddAutoMapper(config =>
-        {
-            config.AddMaps(Assembly.GetExecutingAssembly());
-        });
+      {
+          config.AddMaps(Assembly.GetExecutingAssembly());
+      });
 
         builder.Services.AddTransient<IEmailSender, EmailSender>();
         builder.Services.AddScoped<ILeaveAllocationService, LeaveAllocationService>();
@@ -34,7 +35,16 @@ public class Program
         builder.Services.AddScoped<IPeriodService, PeriodService>();
         builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddAuthorization(options => {
+            options.AddPolicy("admin&super", policy =>
+            {
+                policy.RequireRole("Administrator", "SuperAdmin");
+            }
+            );
+        
+        });
+        builder.Services.AddHttpContextAccessor(); 
+        #endregion
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()

@@ -62,6 +62,8 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveR
          await _leaveRequestService.CancelLeaveRequest(Id);
         return RedirectToAction(nameof(Index));
     }
+    [Authorize(Roles=UserRoles.administrator)]
+    [Authorize(Roles = UserRoles.supervisor)]
     public async Task<IActionResult> ListRequests()
     {
         var model = await _leaveRequestService.AdminGetAllLeaveRequests();
@@ -69,6 +71,7 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveR
         return View(model);
     }
 
+    [Authorize(Roles = UserRoles.administrator)]
     public async Task<IActionResult> Review(int leaveRequestId)
     {
       var model= await  _leaveRequestService.GetLeaveRequestForReview(leaveRequestId);
@@ -77,7 +80,7 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveR
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-
+    [Authorize(Roles = UserRoles.administrator)]
     public async Task<IActionResult> Review(int id, bool approved)
     {
        await _leaveRequestService.ReviewLeaveRequest(id,approved);
