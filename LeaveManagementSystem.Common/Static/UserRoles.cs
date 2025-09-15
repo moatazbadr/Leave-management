@@ -1,4 +1,4 @@
-﻿namespace LeaveManagementSystem.Web
+﻿namespace LeaveManagementSystem.Common.Static
 {
     public static class UserRoles
     {

@@ -62,8 +62,7 @@ public class LeaveRequestController(ILeaveTypeService _leaveTypeService ,ILeaveR
          await _leaveRequestService.CancelLeaveRequest(Id);
         return RedirectToAction(nameof(Index));
     }
-    [Authorize(Roles=UserRoles.administrator)]
-    [Authorize(Roles = UserRoles.supervisor)]
+    [Authorize(Policy = "admin&super")]
     public async Task<IActionResult> ListRequests()
     {
         var model = await _leaveRequestService.AdminGetAllLeaveRequests();
