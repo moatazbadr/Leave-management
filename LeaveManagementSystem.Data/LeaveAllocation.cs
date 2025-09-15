@@ -1,4 +1,4 @@
-﻿namespace LeaveManagementSystem.Web.Data
+﻿namespace LeaveManagementSystem.Data
 {
     public class LeaveAllocation :BaseEntity
     {

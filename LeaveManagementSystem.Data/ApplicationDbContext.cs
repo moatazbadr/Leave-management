@@ -1,4 +1,4 @@
-﻿using LeaveManagementSystem.Web.Data.Configurations;
+﻿using LeaveManagementSystem.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -71,8 +71,8 @@ namespace LeaveManagementSystem.Web.Data
             //modelBuilder.ApplyConfiguration(new LeaveRequestStatusConfiguration());
             ////seeding ApplicationUser using the same configuration classes
             //modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
-          
-            
+
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(

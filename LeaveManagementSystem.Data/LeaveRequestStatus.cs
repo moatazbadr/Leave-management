@@ -1,4 +1,7 @@
-﻿namespace LeaveManagementSystem.Web.Data
+﻿
+using System.ComponentModel.DataAnnotations;
+
+namespace LeaveManagementSystem.Data
 {
     public class LeaveRequestStatus :BaseEntity
     {
