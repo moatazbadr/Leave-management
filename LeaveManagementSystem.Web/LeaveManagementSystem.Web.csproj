@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LeaveManagementSystem.Application\LeaveManagementSystem.Application.csproj" />
     <ProjectReference Include="..\LeaveManagementSystem.Common\LeaveManagementSystem.Common.csproj" />
-    <ProjectReference Include="..\LeaveManagementSystem.Data\LeaveManagementSystem.Data.csproj" />
   </ItemGroup>
 
 </Project>

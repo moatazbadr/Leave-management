@@ -1,4 +1,5 @@
-﻿@model EmployeeLeaveAllocationVM
+﻿@using LeaveManagementSystem.Application.Models.LeaveAllocation
+@model EmployeeLeaveAllocationVM
 @{
     ViewData["Title"] = "Leave Allocation Details";
     var isAdmin = User.IsInRole(UserRoles.administrator);

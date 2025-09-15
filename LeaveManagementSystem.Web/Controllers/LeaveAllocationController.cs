@@ -1,4 +1,5 @@
-﻿using LeaveManagementSystem.Web.Services.LeaveAllocationService;
+﻿using LeaveManagementSystem.Application.Models;
+using LeaveManagementSystem.Application.Models.LeaveAllocation;
 using LeaveManagementSystem.Web.Services.LeaveService;
 using Microsoft.AspNetCore.Mvc;
 

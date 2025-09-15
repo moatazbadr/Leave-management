@@ -1,11 +1,15 @@
-    using LeaveManagementSystem.Web.Services.EmailService;
-using LeaveManagementSystem.Web.Services.LeaveAllocationService;
-using LeaveManagementSystem.Web.Services.LeaveRequests;
+using LeaveManagementSystem.Application.Models;
+using LeaveManagementSystem.Application.Services.EmailService;
+using LeaveManagementSystem.Application.Services.LeaveAllocationService;
+using LeaveManagementSystem.Application.Services.LeaveRequests;
+using LeaveManagementSystem.Application.Services.PeriodService;
+using LeaveManagementSystem.Application.Services.Users;
 using LeaveManagementSystem.Web.Services.LeaveService;
-using LeaveManagementSystem.Web.Services.PeriodService;
-using LeaveManagementSystem.Web.Services.Users;
 using Microsoft.EntityFrameworkCore;
+using LeaveManagementSystem.Application.AutoMapperProfiles;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace LeaveManagementSystem.Web;
 
@@ -23,27 +27,27 @@ public class Program
             options.UseSqlServer(connectionString));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
         #region Services Manager
-        builder.Services.AddAutoMapper(config =>
-      {
-          config.AddMaps(Assembly.GetExecutingAssembly());
-      });
+        // Use this line to register all AutoMapper profiles from the external project:
+        //builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+        builder.Services.AddAutoMapper(cfg => { cfg.AddProfile<MappingProfiles>(); });
 
         builder.Services.AddTransient<IEmailSender, EmailSender>();
         builder.Services.AddScoped<ILeaveAllocationService, LeaveAllocationService>();
 
         builder.Services.AddScoped<ILeaveTypeService, LeaveTypeService>();
-        builder.Services.AddScoped<IPeriodService, PeriodService>();
+         builder.Services.AddScoped<IPeriodService, PeriodService>();
         builder.Services.AddScoped<ILeaveRequestService, LeaveRequestService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddAuthorization(options => {
+        builder.Services.AddAuthorization(options =>
+        {
             options.AddPolicy("admin&super", policy =>
             {
                 policy.RequireRole("Administrator", "SuperAdmin");
             }
             );
-        
+
         });
-        builder.Services.AddHttpContextAccessor(); 
+        builder.Services.AddHttpContextAccessor();
         #endregion
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)

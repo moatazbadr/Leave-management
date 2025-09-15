@@ -1,6 +1,6 @@
-﻿using LeaveManagementSystem.Web.Models.LeaveRequestModels;
-using LeaveManagementSystem.Web.Services.LeaveAllocationService;
-using LeaveManagementSystem.Web.Services.LeaveRequests;
+﻿
+using LeaveManagementSystem.Application.Models.LeaveRequestModels;
+using LeaveManagementSystem.Application.Services.LeaveRequests;
 using LeaveManagementSystem.Web.Services.LeaveService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

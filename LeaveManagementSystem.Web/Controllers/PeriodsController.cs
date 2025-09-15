@@ -1,32 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using AutoMapper;
+using LeaveManagementSystem.Application.Models.Period;
+using LeaveManagementSystem.Application.Services.PeriodService;
 using Microsoft.EntityFrameworkCore;
-using LeaveManagementSystem.Web.Data;
-using AutoMapper;
-using LeaveManagementSystem.Web.Models.Period;
-using LeaveManagementSystem.Web.Models.LeaveTypes;
-using LeaveManagementSystem.Web.Services.PeriodService;
 
 namespace LeaveManagementSystem.Web.Controllers
 {
     [Authorize(Roles = "administrator")]
     public class PeriodsController : Controller
     {
-      
+
         private readonly IPeriodService _periodService;
         private readonly IMapper _mapper;
 
-        public PeriodsController(IPeriodService periodService ,IMapper mapper)
+        public PeriodsController(IPeriodService periodService, IMapper mapper)
         {
             _periodService = periodService;
             _mapper = mapper;
         }
 
-        
+
 
         // GET: Periods
         public async Task<IActionResult> Index()
@@ -37,7 +29,7 @@ namespace LeaveManagementSystem.Web.Controllers
             {
                 return View(data);
             }
-            
+
             return View(data);
         }
 
@@ -68,7 +60,7 @@ namespace LeaveManagementSystem.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PeriodCreateVM period)
         {
-            
+
             var existingPeriod = await _periodService.CheckPeriod(period.Name);
 
             if (existingPeriod)
@@ -78,7 +70,7 @@ namespace LeaveManagementSystem.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                 await  _periodService.AddAsync(period);
+                await _periodService.AddAsync(period);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -164,10 +156,10 @@ namespace LeaveManagementSystem.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _periodService.RemoveAsync(id);
-          
+
             return RedirectToAction(nameof(Index));
         }
 
-        
+
     }
 }

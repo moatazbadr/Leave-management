@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using LeaveManagementSystem.Web.Data;
-using LeaveManagementSystem.Web.Models.LeaveTypes;
-using AutoMapper;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+﻿using LeaveManagementSystem.Application.Models.LeaveTypes;
 using LeaveManagementSystem.Web.Services.LeaveService;
+using Microsoft.EntityFrameworkCore;
 
 namespace LeaveManagementSystem.Web.Controllers
 {
@@ -31,11 +22,11 @@ namespace LeaveManagementSystem.Web.Controllers
 
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null )
+            if (id == null)
             {
                 return NotFound();
             }
-            var leaveType = await _leaveTypeService.GetleaveTypeAsync<LeaveTypesReadOnly>(id.Value);    
+            var leaveType = await _leaveTypeService.GetleaveTypeAsync<LeaveTypesReadOnly>(id.Value);
             if (leaveType == null)
             {
                 return NotFound();
@@ -51,12 +42,12 @@ namespace LeaveManagementSystem.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LeaveTypesCreateVM leaveTypesCreateVM)
-         {
+        {
             if (leaveTypesCreateVM.Name.Contains("vacation"))
             {
                 ModelState.AddModelError(nameof(leaveTypesCreateVM.Name), "you're kidding me Right ???");
             }
-            
+
             bool leaveTypeExists = await _leaveTypeService.CheckLeaveType(leaveTypesCreateVM.Name);
 
             if (leaveTypeExists)
@@ -66,7 +57,7 @@ namespace LeaveManagementSystem.Web.Controllers
             }
             if (ModelState.IsValid)
             {
-              await  _leaveTypeService.CreateAsync(leaveTypesCreateVM);
+                await _leaveTypeService.CreateAsync(leaveTypesCreateVM);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -93,10 +84,10 @@ namespace LeaveManagementSystem.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, LeaveTypeEditVM leaveTypeEdit)
         {
-     
+
             bool leaveTypeExists = await _leaveTypeService.CheckLeaveType(leaveTypeEdit.Name);
-            
-            if (leaveTypeExists &&(id != leaveTypeEdit.Id))
+
+            if (leaveTypeExists && (id != leaveTypeEdit.Id))
             {
                 ModelState.AddModelError(nameof(leaveTypeEdit.Name), "This Leave Type already Exists");
             }
@@ -110,7 +101,7 @@ namespace LeaveManagementSystem.Web.Controllers
             {
                 try
                 {
-                 await  _leaveTypeService.Edit(leaveTypeEdit);
+                    await _leaveTypeService.Edit(leaveTypeEdit);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -148,13 +139,13 @@ namespace LeaveManagementSystem.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-           
-                await _leaveTypeService.Remove(id);
-            
+
+            await _leaveTypeService.Remove(id);
+
 
             return RedirectToAction(nameof(Index));
         }
 
-     
+
     }
 }
